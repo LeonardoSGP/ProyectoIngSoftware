@@ -63,7 +63,6 @@ public class FrmMenu extends javax.swing.JFrame {
             // Desactiva gráficas o historial
             jMenuItem_ver_historial.setEnabled(false);
 
-
         }
     }
 
