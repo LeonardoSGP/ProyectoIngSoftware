@@ -1,6 +1,7 @@
 package vista;
 
 import controlador.Reportes;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -27,7 +28,6 @@ public class FrmMenu extends javax.swing.JFrame {
         this.add(jDesktopPane_menu);
 
     }
-
     @Override
     public Image getIconImage() {
         Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/ventas.png"));

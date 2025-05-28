@@ -98,7 +98,7 @@ public class VentaPDF {
             Encabezado.addCell(img);
 
             String ruc = "0987654321001";
-            String nombre = "Miscelanea Don Carlos";
+            String nombre = "Miscelanea Smart";
             String telefono = "0987654321";
             String direccion = "Santa Rosa";
             String razon = "La mejor tienda de Oaxaca";

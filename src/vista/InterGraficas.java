@@ -2,26 +2,28 @@ package vista;
 
 import java.awt.Dimension;
 import java.util.Date;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import static vista.FrmMenu.jDesktopPane_menu;
 
 public class InterGraficas extends javax.swing.JInternalFrame {
-    
+
     public static String fecha_inicio = "", fecha_fin = "";
 
     public InterGraficas() {
- initComponents();
+        initComponents();
         this.setSize(new Dimension(450, 300));
         this.setTitle("Historial de Ventas");
 
         // Obtener la fecha de hoy
         Date today = new Date();
-        
+
         // Establecer la fecha máxima que se puede seleccionar (hoy)
         jDateChooser_fecha_inicio.setMaxSelectableDate(today);
         jDateChooser_fecha_fin.setMaxSelectableDate(today);
 
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -80,7 +82,23 @@ public class InterGraficas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_GuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_GuardarActionPerformed
-        // Obtener las fechas seleccionadas por el usuario
+        // Obtener las fechas como objetos Date
+        java.util.Date fechaInicioDate = jDateChooser_fecha_inicio.getDate();
+        java.util.Date fechaFinDate = jDateChooser_fecha_fin.getDate();
+
+        // Validar que ambas fechas estén seleccionadas
+        if (fechaInicioDate == null || fechaFinDate == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona ambas fechas.", "Fechas requeridas", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Validar que la fecha fin no sea anterior a la de inicio
+        if (fechaFinDate.before(fechaInicioDate)) {
+            JOptionPane.showMessageDialog(this, "La fecha de fin no puede ser anterior a la fecha de inicio.", "Rango inválido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Obtener las fechas como texto (si así las necesitas para el gráfico)
         fecha_inicio = ((JTextField) jDateChooser_fecha_inicio.getDateEditor().getUiComponent()).getText();
         fecha_fin = ((JTextField) jDateChooser_fecha_fin.getDateEditor().getUiComponent()).getText();
 
@@ -101,6 +119,5 @@ public class InterGraficas extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel_wallpaper;
     // End of variables declaration//GEN-END:variables
-
 
 }
