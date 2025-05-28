@@ -442,6 +442,9 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                                 JOptionPane.showMessageDialog(null, "Producto Agregado");
                                 auxIdDetalle++;
                             }
+                            jComboBox_cliente.setEnabled(false);
+                            txt_cliente_buscar.setEnabled(false);
+                            jButton_busca_cliente.setEnabled(false);
 
                             txt_cantidad.setText(""); // Limpiar el campo
                             // Volver a cargar combo productos
@@ -514,6 +517,9 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
 
                 if (controlVenta.guardar(cabeceraVenta)) {
                     JOptionPane.showMessageDialog(null, "¡Venta Registrada!");
+                    jComboBox_cliente.setEnabled(true);
+                    txt_cliente_buscar.setEnabled(true);
+                    jButton_busca_cliente.setEnabled(true);
 
                     //Generar la factura de venta
                     VentaPDF pdf = new VentaPDF();
