@@ -128,6 +128,11 @@ public class InterGestionarCliente extends javax.swing.JInternalFrame {
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 90, -1));
 
         txt_nombre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
         txt_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_nombreKeyTyped(evt);
@@ -303,6 +308,10 @@ public class InterGestionarCliente extends javax.swing.JInternalFrame {
         if (c < '0' || c > '9')
             evt.consume();
     }//GEN-LAST:event_txt_telefonoKeyTyped
+
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
