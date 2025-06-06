@@ -77,6 +77,9 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
         Icon icono = new ImageIcon(wallpaper.getImage().getScaledInstance(800, 600, WIDTH));
         jLabel_wallpaper.setIcon(icono);
         this.repaint();
+        jComboBox_producto.setEnabled(false);
+        txt_cantidad.setEnabled(false);
+        jButton_añadir_producto.setEnabled(false);
     }
 
     //metodo para inicializar la tabla de los productos
@@ -180,6 +183,11 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
 
         jComboBox_cliente.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jComboBox_cliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione cliente:", "Item 2", "Item 3", "Item 4" }));
+        jComboBox_cliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox_clienteActionPerformed(evt);
+            }
+        });
         getContentPane().add(jComboBox_cliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 170, -1));
 
         jComboBox_producto.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -634,6 +642,17 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
             evt.consume();
     }//GEN-LAST:event_txt_efectivoKeyTyped
 
+    private void jComboBox_clienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_clienteActionPerformed
+        jComboBox_producto.setEnabled(true);
+        txt_cantidad.setEnabled(true);
+        jButton_añadir_producto.setEnabled(true);
+
+        if (jComboBox_cliente.getSelectedIndex() == 0) {
+            jComboBox_producto.setEnabled(false);
+            txt_cantidad.setEnabled(false);
+            jButton_añadir_producto.setEnabled(false);
+        }
+    }//GEN-LAST:event_jComboBox_clienteActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_RegistrarVenta;
