@@ -468,9 +468,9 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                                 JOptionPane.showMessageDialog(null, "Producto Agregado");
                                 auxIdDetalle++;
                             }
-                                jComboBox_cliente.setEnabled(false);
-                             //txt_cliente_buscar.setEnabled(false);
-                              jButton_busca_cliente.setEnabled(false);
+                            jComboBox_cliente.setEnabled(false);
+                            txt_cliente_buscar.setEnabled(false);
+                            jButton_busca_cliente.setEnabled(false);
 
                             txt_cantidad.setText(""); // Limpiar el campo
                             // Volver a cargar combo productos
