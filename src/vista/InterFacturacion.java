@@ -469,7 +469,7 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                                 auxIdDetalle++;
                             }
                                 jComboBox_cliente.setEnabled(false);
-                             txt_cliente_buscar.setEnabled(false);
+                             //txt_cliente_buscar.setEnabled(false);
                               jButton_busca_cliente.setEnabled(false);
 
                             txt_cantidad.setText(""); // Limpiar el campo
