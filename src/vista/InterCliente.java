@@ -72,6 +72,11 @@ public class InterCliente extends javax.swing.JInternalFrame {
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 170, 90, -1));
 
         txt_nombre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
         txt_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_nombreKeyTyped(evt);
@@ -91,6 +96,11 @@ public class InterCliente extends javax.swing.JInternalFrame {
         getContentPane().add(txt_cedula, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 110, 170, -1));
 
         txt_telefono.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txt_telefono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_telefonoActionPerformed(evt);
+            }
+        });
         txt_telefono.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_telefonoKeyTyped(evt);
@@ -119,70 +129,78 @@ public class InterCliente extends javax.swing.JInternalFrame {
 
     private void jButton_GuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_GuardarActionPerformed
 
-    Cliente cliente = new Cliente();
-    ClienteJpaController controlCliente = new ClienteJpaController();
-    
-    StringBuilder errores = new StringBuilder();
-    
-    // Validar Nombre
-    if (!validarNombre(txt_nombre.getText().trim())) {
-        errores.append("El nombre solo debe contener letras y no puede estar vacío.\n");
-        txt_nombre.setBackground(Color.RED);
-    } else {
-        txt_nombre.setBackground(Color.GREEN);
-    }
+        Cliente cliente = new Cliente();
+        ClienteJpaController controlCliente = new ClienteJpaController();
 
-    // Validar Apellido
-    if (!validarNombre(txt_apellido.getText().trim())) {
-        errores.append("El apellido solo debe contener letras y no puede estar vacío.\n");
-        txt_apellido.setBackground(Color.RED);
-    } else {
-        txt_apellido.setBackground(Color.GREEN);
-    }
+        StringBuilder errores = new StringBuilder();
 
-    // Validar Cédula
-    if (!validarCedula(txt_cedula.getText().trim())) {
-        errores.append("La cédula debe contener exactamente 5 dígitos.\n");
-        txt_cedula.setBackground(Color.RED);
-    } else {
-        txt_cedula.setBackground(Color.GREEN);
-    }
+        String nombre = txt_nombre.getText().trim();
+        String apellido = txt_apellido.getText().trim();
+        String cedula = txt_cedula.getText().trim();
+        String telefono = txt_telefono.getText().trim();
+        String direccion = txt_direccion.getText().trim();
 
-    // Validar Teléfono
-    if (!validarTelefono(txt_telefono.getText().trim(), controlCliente)) {
-        errores.append("El teléfono debe ser único, contener solo números y tener exactamente 10 dígitos.\n");
-        txt_telefono.setBackground(Color.RED);
-    } else {
-        txt_telefono.setBackground(Color.GREEN);
-    }
+        // Validar Nombre
+        if (!validarNombre(nombre)) {
+            errores.append("El nombre solo debe contener letras y no puede estar vacío.\n");
+            txt_nombre.setBackground(Color.RED);
+        } else {
+            txt_nombre.setBackground(Color.GREEN);
+        }
 
-    // Validar Dirección
-    if (!validarDireccion(txt_direccion.getText().trim())) {
-        errores.append("La dirección debe tener al menos 10 caracteres.\n");
-        txt_direccion.setBackground(Color.RED);
-    } else {
-        txt_direccion.setBackground(Color.GREEN);
-    }
+        // Validar Apellido
+        if (!validarNombre(apellido)) {
+            errores.append("El apellido solo debe contener letras y no puede estar vacío.\n");
+            txt_apellido.setBackground(Color.RED);
+        } else {
+            txt_apellido.setBackground(Color.GREEN);
+        }
 
-    // Si hay errores, mostrarlos y salir
-    if (errores.length() > 0) {
-        JOptionPane.showMessageDialog(null, errores.toString(), "Errores de Validación", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+        // Validar Cédula (formato y unicidad)
+        if (!validarCedula(cedula)) {
+            errores.append("La cédula debe contener exactamente 5 dígitos.\n");
+            txt_cedula.setBackground(Color.RED);
+        } else if (controlCliente.existeCliente(cedula)) {
+            errores.append("La cédula ya está registrada en la base de datos.\n");
+            txt_cedula.setBackground(Color.RED);
+        } else {
+            txt_cedula.setBackground(Color.GREEN);
+        }
 
-    // Guardar cliente si no existe
-    if (!controlCliente.existeCliente(txt_cedula.getText().trim())) {
-        cliente.setNombre(txt_nombre.getText().trim());
-        cliente.setApellido(txt_apellido.getText().trim());
-        cliente.setCedula(txt_cedula.getText().trim());
-        cliente.setTelefono(txt_telefono.getText().trim());
-        cliente.setDireccion(txt_direccion.getText().trim());
+        // Validar Teléfono (formato y unicidad)
+        if (!validarTelefono(telefono, controlCliente)) {
+            errores.append("El teléfono debe ser único, contener solo números y tener exactamente 10 dígitos.\n");
+            txt_telefono.setBackground(Color.RED);
+        } else {
+            txt_telefono.setBackground(Color.GREEN);
+        }
+
+        // Validar Dirección
+        if (!validarDireccion(direccion)) {
+            errores.append("La dirección debe tener al menos 10 caracteres.\n");
+            txt_direccion.setBackground(Color.RED);
+        } else {
+            txt_direccion.setBackground(Color.GREEN);
+        }
+
+        // Mostrar errores si existen
+        if (errores.length() > 0) {
+            JOptionPane.showMessageDialog(null, errores.toString(), "Errores de Validación", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Guardar cliente
+        cliente.setNombre(nombre);
+        cliente.setApellido(apellido);
+        cliente.setCedula(cedula);
+        cliente.setTelefono(telefono);
+        cliente.setDireccion(direccion);
         cliente.setEstado(1);
 
         if (controlCliente.guardar(cliente)) {
             JOptionPane.showMessageDialog(null, "Registro Guardado");
 
-            // Restablecer colores a blanco tras el guardado exitoso
+            // Limpiar colores
             txt_nombre.setBackground(Color.WHITE);
             txt_apellido.setBackground(Color.WHITE);
             txt_cedula.setBackground(Color.WHITE);
@@ -193,28 +211,36 @@ public class InterCliente extends javax.swing.JInternalFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Error al Guardar");
         }
-    } else {
-        JOptionPane.showMessageDialog(null, "El cliente ya está registrado en la Base de Datos.");
-        this.Limpiar();
-    }
 
     }//GEN-LAST:event_jButton_GuardarActionPerformed
 
     private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
-             char c = evt.getKeyChar();
-        if ((c < 'a' || c > 'z') && (c< 'A') | c>'Z') evt.consume();
+        char c = evt.getKeyChar();
+        if (!Character.isLetter(c) && c != ' ') {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_nombreKeyTyped
 
     private void txt_apellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_apellidoKeyTyped
-             char c = evt.getKeyChar();
-        if ((c < 'a' || c > 'z') && (c< 'A') | c>'Z') evt.consume();
+        char c = evt.getKeyChar();
+        if (!Character.isLetter(c) && c != ' ') {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_apellidoKeyTyped
 
     private void txt_telefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_telefonoKeyTyped
-               char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (c < '0' || c > '9')
             evt.consume();
     }//GEN-LAST:event_txt_telefonoKeyTyped
+
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
+
+    private void txt_telefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_telefonoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_telefonoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -249,7 +275,6 @@ public class InterCliente extends javax.swing.JInternalFrame {
         txt_direccion.setBackground(Color.white);
     }
 
-    
 // Métodos de validación
     private boolean validarNombre(String nombre) {
         return nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+") && !nombre.isEmpty();

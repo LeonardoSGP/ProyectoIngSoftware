@@ -86,6 +86,8 @@ public class InterGestionarCliente extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable_clientes.getTableHeader().setResizingAllowed(false);
+        jTable_clientes.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable_clientes);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 710, 250));

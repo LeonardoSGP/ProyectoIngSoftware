@@ -81,7 +81,12 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
 
     //metodo para inicializar la tabla de los productos
     private void inicializarTablaProducto() {
-        modeloDatosProductos = new DefaultTableModel();
+        modeloDatosProductos = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Ninguna celda es editable
+            }
+        };
         //añadir columnas
         modeloDatosProductos.addColumn("N");
         modeloDatosProductos.addColumn("Nombre");
@@ -218,7 +223,17 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_productos.getTableHeader().setResizingAllowed(false);
+        jTable_productos.getTableHeader().setReorderingAllowed(false);
         jTable_productos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable_productosMouseClicked(evt);
@@ -281,6 +296,11 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                 txt_efectivoActionPerformed(evt);
             }
         });
+        txt_efectivo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_efectivoKeyTyped(evt);
+            }
+        });
         jPanel2.add(txt_efectivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 150, 120, -1));
 
         txt_cambio.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -329,6 +349,12 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton_busca_clienteActionPerformed
 
     private void jButton_añadir_productoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_añadir_productoActionPerformed
+// VALIDACIÓN PARA CLIENTE ANTES DE TODO
+        Object clienteSeleccionado = jComboBox_cliente.getSelectedItem();
+        if (clienteSeleccionado == null || clienteSeleccionado.toString().equalsIgnoreCase("Seleccione cliente")) {
+            JOptionPane.showMessageDialog(null, "Primero seleccione un cliente antes de añadir productos");
+            return; // Detiene el método si no hay cliente válido
+        }
         String combo = this.jComboBox_producto.getSelectedItem().toString();
 // Validar que se seleccione un producto
         if (combo.equalsIgnoreCase("Seleccione producto:")) {
@@ -442,9 +468,9 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                                 JOptionPane.showMessageDialog(null, "Producto Agregado");
                                 auxIdDetalle++;
                             }
-                            jComboBox_cliente.setEnabled(false);
-                            txt_cliente_buscar.setEnabled(false);
-                            jButton_busca_cliente.setEnabled(false);
+                                jComboBox_cliente.setEnabled(false);
+                             txt_cliente_buscar.setEnabled(false);
+                              jButton_busca_cliente.setEnabled(false);
 
                             txt_cantidad.setText(""); // Limpiar el campo
                             // Volver a cargar combo productos
@@ -506,12 +532,34 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
         if (!jComboBox_cliente.getSelectedItem().equals("Seleccione cliente:")) {
             if (listaProductos.size() > 0) {
 
-                //metodo para obtener el id del cliente
+                // ✅ Validar efectivo antes de continuar
+                String efectivoStr = txt_efectivo.getText().trim();
+                if (efectivoStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Ingrese la cantidad de efectivo.");
+                    return;
+                }
+
+                double efectivo;
+                try {
+                    efectivo = Double.parseDouble(efectivoStr);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "El valor ingresado en efectivo no es válido.");
+                    return;
+                }
+
+                double totalPagar = Double.parseDouble(txt_total_pagar.getText());
+                if (efectivo < totalPagar) {
+                    JOptionPane.showMessageDialog(null, "El efectivo ingresado no es suficiente para cubrir el total a pagar.");
+                    return;
+                }
+
+                // 1. Obtener el ID del cliente
                 this.ObtenerIdCliente();
-                //registrar cabecera
+
+                // 2. Registrar cabecera
                 cabeceraVenta.setIdCabeceraventa(0);
                 cabeceraVenta.setIdCliente(idCliente);
-                cabeceraVenta.setValorPagar(Double.parseDouble(txt_total_pagar.getText()));
+                cabeceraVenta.setValorPagar(totalPagar);
                 cabeceraVenta.setFechaVenta(fechaActual);
                 cabeceraVenta.setEstado(1);
 
@@ -521,15 +569,15 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                     txt_cliente_buscar.setEnabled(true);
                     jButton_busca_cliente.setEnabled(true);
 
-                    //Generar la factura de venta
+                    // 3. Generar factura PDF
                     VentaPDF pdf = new VentaPDF();
                     pdf.DatosCliente(idCliente);
                     pdf.generarFacturaPDF();
 
-                    //guardar detalle
+                    // 4. Guardar detalle
                     for (DetalleVenta elemento : listaProductos) {
                         detalleVenta.setIdDetalleVenta(0);
-                        detalleVenta.setIdCabeceraVenta(0);// o pasar un objeto CabeceraVenta válido
+                        detalleVenta.setIdCabeceraVenta(0); // deberías obtener el ID generado si lo tienes disponible
                         detalleVenta.setIdProducto(elemento.getIdProducto());
                         detalleVenta.setCantidad(elemento.getCantidad());
                         detalleVenta.setPrecioUnitario(elemento.getPrecioUnitario());
@@ -540,8 +588,7 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
                         detalleVenta.setEstado(1);
 
                         if (controlVenta.guardarDetalle(detalleVenta)) {
-                            //System.out.println("Detalle de Venta Registrado");
-
+                            // Limpieza de campos
                             txt_subtotal.setText("0.0");
                             txt_iva.setText("0.0");
                             txt_descuento.setText("0.0");
@@ -552,20 +599,21 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
 
                             this.CargarComboClientes();
 
-                            // Llamada al método RestarStockProductos y verificar la cantidad restante
-                            int cantidadRestante = this.RestarStockProductos(elemento.getIdProducto(), elemento.getCantidad());
-
+                            // Restar stock
+                            this.RestarStockProductos(elemento.getIdProducto(), elemento.getCantidad());
                         } else {
                             JOptionPane.showMessageDialog(null, "¡Error al guardar detalle de venta!");
                         }
                     }
-                    //vaciamos la lista
+
+                    // 5. Limpiar lista y tabla
                     listaProductos.clear();
                     listaTablaProductos();
 
                 } else {
                     JOptionPane.showMessageDialog(null, "¡Error al guardar cabecera de venta!");
                 }
+
             } else {
                 JOptionPane.showMessageDialog(null, "¡Seleccione un producto!");
             }
@@ -579,6 +627,12 @@ public class InterFacturacion extends javax.swing.JInternalFrame {
         // Llamar a la función que calcula el cambio cuando el usuario presione "Enter" o termine de escribir
         calcularCambio();
     }//GEN-LAST:event_txt_efectivoActionPerformed
+
+    private void txt_efectivoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_efectivoKeyTyped
+        char c = evt.getKeyChar();
+        if (c < '0' || c > '9')
+            evt.consume();
+    }//GEN-LAST:event_txt_efectivoKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

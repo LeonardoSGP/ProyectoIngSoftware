@@ -34,7 +34,7 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
         //Cargar tabla
         this.CargarTablaProductos();
         this.CargarComboCategoria();
-        
+
         //insertar imagen en nuestro JLabel
         ImageIcon wallpaper = new ImageIcon("src/img/fondo3.jpg");
         Icon icono = new ImageIcon(wallpaper.getImage().getScaledInstance(900, 500, WIDTH));
@@ -93,6 +93,8 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable_productos.getTableHeader().setResizingAllowed(false);
+        jTable_productos.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable_productos);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 710, 250));
@@ -135,6 +137,16 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 90, -1));
 
         txt_nombre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
+        txt_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_nombreKeyTyped(evt);
+            }
+        });
         jPanel3.add(txt_nombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, 170, -1));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -338,38 +350,49 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton_actualizarActionPerformed
 
     private void jButton_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_eliminarActionPerformed
-   ProductoJpaController controlProducto = new ProductoJpaController();
-    
-    // Verificar si se ha seleccionado un producto
-    if (idProducto == 0) {
-        JOptionPane.showMessageDialog(null, "¡Seleccione un Producto!");
-    } else {
-        // Mostrar un cuadro de confirmación
-        int confirmacion = JOptionPane.showConfirmDialog(
-            null, 
-            "¿Está seguro de que desea eliminar este producto?", 
-            "Confirmar Eliminación", 
-            JOptionPane.YES_NO_OPTION, 
-            JOptionPane.WARNING_MESSAGE
-        );
-        
-        // Si el usuario selecciona 'Sí'
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            if (controlProducto.eliminar(idProducto)) {
-                JOptionPane.showMessageDialog(null, "¡Producto Eliminado!");
-                this.CargarTablaProductos();
-                this.CargarComboCategoria();
-                this.Limpiar();
-            } else {
-                JOptionPane.showMessageDialog(null, "¡Error al eliminar producto!");
+        ProductoJpaController controlProducto = new ProductoJpaController();
+
+        // Verificar si se ha seleccionado un producto
+        if (idProducto == 0) {
+            JOptionPane.showMessageDialog(null, "¡Seleccione un Producto!");
+        } else {
+            // Mostrar un cuadro de confirmación
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    null,
+                    "¿Está seguro de que desea eliminar este producto?",
+                    "Confirmar Eliminación",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            // Si el usuario selecciona 'Sí'
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                if (controlProducto.eliminar(idProducto)) {
+                    JOptionPane.showMessageDialog(null, "¡Producto Eliminado!");
+                    this.CargarTablaProductos();
+                    this.CargarComboCategoria();
+                    this.Limpiar();
+                } else {
+                    JOptionPane.showMessageDialog(null, "¡Error al eliminar producto!");
+                }
             }
         }
-    }
     }//GEN-LAST:event_jButton_eliminarActionPerformed
 
     private void txt_cantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cantidadActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_cantidadActionPerformed
+
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
+
+    private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isLetter(c) && c != ' ') {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txt_nombreKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_actualizar;
@@ -395,7 +418,7 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txt_precio;
     // End of variables declaration//GEN-END:variables
 
-  private void Limpiar() {
+    private void Limpiar() {
         txt_nombre.setText("");
         txt_cantidad.setText("");
         txt_precio.setText("");
@@ -450,7 +473,7 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
             model.addColumn("Codigo");
             model.addColumn("Ganancia");
             model.addColumn("Categoria");
-          //  model.addColumn("Estado");
+            //  model.addColumn("Estado");
 
             while (rs.next()) {
 
@@ -492,6 +515,7 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
             }
         });
     }
+
     private void EnviarDatosProductoSeleccionado(int idProducto) {
         try {
             Connection con = Conexion.conectar();
@@ -537,8 +561,6 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
         }
     }
 
-
-
     private double calcularIva(double precio, int iva) {
         int p_iva = iva;
         switch (p_iva) {
@@ -558,6 +580,7 @@ public class InterGestionarProducto extends javax.swing.JInternalFrame {
         IVA = (double) Math.round(IVA * 100) / 100;
         return IVA;
     }
+
     private String relacionarCategoria(int idCategoria) {
 
         String sql = "select descripcion from tb_categoria where idCategoria = '" + idCategoria + "'";

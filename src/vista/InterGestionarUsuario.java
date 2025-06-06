@@ -86,6 +86,8 @@ public class InterGestionarUsuario extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable_usuarios.getTableHeader().setResizingAllowed(false);
+        jTable_usuarios.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable_usuarios);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 710, 250));

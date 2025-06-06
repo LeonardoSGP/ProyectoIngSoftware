@@ -12,7 +12,6 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import modelo.Producto;
 
-
 public class InterProducto extends javax.swing.JInternalFrame {
 
     int obtenerIdCategoriaCombo = 0;
@@ -24,7 +23,6 @@ public class InterProducto extends javax.swing.JInternalFrame {
 
         this.CargarComboCategorias();
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -92,6 +90,11 @@ public class InterProducto extends javax.swing.JInternalFrame {
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 200, 90, -1));
 
         txt_nombre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
         txt_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_nombreKeyTyped(evt);
@@ -314,15 +317,21 @@ public class InterProducto extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jComboBox_ivaActionPerformed
 
     private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
-                   char c = evt.getKeyChar();
-        if ((c < 'a' || c > 'z') && (c< 'A') | c>'Z') evt.consume();
+        char c = evt.getKeyChar();
+        if (!Character.isLetter(c) && c != ' ') {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_nombreKeyTyped
 
     private void txt_cantidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cantidadKeyTyped
-                     char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (c < '0' || c > '9')
             evt.consume();
     }//GEN-LAST:event_txt_cantidadKeyTyped
+
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -342,7 +351,7 @@ public class InterProducto extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txt_nombre;
     private javax.swing.JTextField txt_precio;
     // End of variables declaration//GEN-END:variables
-   
+
     private void Limpiar() {
         txt_nombre.setText("");
         txt_cantidad.setText("");

@@ -68,6 +68,8 @@ public class InterGestionarCategoria extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable_categorias.getTableHeader().setResizingAllowed(false);
+        jTable_categorias.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable_categorias);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 330, 230));

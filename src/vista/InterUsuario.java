@@ -7,12 +7,12 @@ import javax.swing.JOptionPane;
 import modelo.Usuario;
 
 public class InterUsuario extends javax.swing.JInternalFrame {
-    
+
     public InterUsuario() {
         initComponents();
         this.setSize(new Dimension(400, 300));
         this.setTitle("Nuevo Usuario");
-        
+
         txt_password.setVisible(true);
         txt_password_visible.setVisible(false);
     }
@@ -76,6 +76,11 @@ public class InterUsuario extends javax.swing.JInternalFrame {
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 170, 90, -1));
 
         txt_nombre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
         txt_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_nombreKeyTyped(evt);
@@ -132,74 +137,87 @@ public class InterUsuario extends javax.swing.JInternalFrame {
         boolean validado = true;
         StringBuilder mensajeError = new StringBuilder();
 
-        if (!validarNombre(txt_nombre.getText().trim())) {
+        // Validar nombre
+        String nombre = txt_nombre.getText().trim();
+        if (!validarNombre(nombre)) {
             mensajeError.append("El nombre solo debe contener letras y no puede estar vacío.\n");
             txt_nombre.setBackground(Color.red);
-            txt_nombre.setText(""); // Limpia solo este campo
+            txt_nombre.setText("");
             validado = false;
         } else {
             txt_nombre.setBackground(Color.green);
         }
 
-        if (!validarNombre(txt_apellido.getText().trim())) {
+        // Validar apellido
+        String apellido = txt_apellido.getText().trim();
+        if (!validarNombre(apellido)) {
             mensajeError.append("El apellido solo debe contener letras y no puede estar vacío.\n");
             txt_apellido.setBackground(Color.red);
-            txt_apellido.setText(""); // Limpia solo este campo
+            txt_apellido.setText("");
             validado = false;
         } else {
             txt_apellido.setBackground(Color.green);
         }
 
-        if (!validarUsuario(txt_usuario.getText().trim())) {
-            mensajeError.append("El usuario debe contener solo letras,números, no puede estar vacio y no debe exceder los 20 caracteres.\n");
+        // Validar usuario
+        String usuarioText = txt_usuario.getText().trim();
+        if (!validarUsuario(usuarioText)) {
+            mensajeError.append("El usuario debe contener solo letras, números, no puede estar vacío y no debe exceder los 20 caracteres.\n");
             txt_usuario.setBackground(Color.red);
-            txt_usuario.setText(""); // Limpia solo este campo
+            txt_usuario.setText("");
             validado = false;
         } else {
             txt_usuario.setBackground(Color.green);
         }
 
-        if (!validarPassword(txt_password.getText().trim())) {
+        // Validar password
+        String password = txt_password.getText().trim();
+        if (!validarPassword(password)) {
             mensajeError.append("La contraseña debe tener al menos una mayúscula, un número y mínimo 8 caracteres.\n");
             txt_password.setBackground(Color.red);
-            txt_password.setText(""); // Limpia solo este campo
+            txt_password.setText("");
             validado = false;
         } else {
             txt_password.setBackground(Color.green);
         }
 
-        if (!validarTelefono(txt_telefono.getText().trim(), controlUsuario)) {
-            mensajeError.append("El teléfono debe contener exactamente 10 dígitos numéricos, no puede estar vacio y ser único.\n");
+        // Validar teléfono
+        String telefono = txt_telefono.getText().trim();
+        if (!validarTelefono(telefono, controlUsuario)) {
+            mensajeError.append("El teléfono debe contener exactamente 10 dígitos numéricos, no puede estar vacío y debe ser único.\n");
             txt_telefono.setBackground(Color.red);
-            txt_telefono.setText(""); // Limpia solo este campo
+            txt_telefono.setText("");
             validado = false;
         } else {
             txt_telefono.setBackground(Color.green);
         }
 
-        // Si hubo errores, los muestra y no guarda
+        // Mostrar errores si existen
         if (!validado) {
             JOptionPane.showMessageDialog(null, mensajeError.toString(), "Errores en el formulario", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Guardar usuario si todos los campos están bien
-        if (!controlUsuario.existeUsuario(txt_usuario.getText().trim())) {
-            usuario.setNombre(txt_nombre.getText().trim());
-            usuario.setApellido(txt_apellido.getText().trim());
-            usuario.setUsuario(txt_usuario.getText().trim());
-            usuario.setPassword(txt_password.getText().trim());
-            usuario.setTelefono(txt_telefono.getText().trim());
-            usuario.setEstado(1);
-
-            if (controlUsuario.guardar(usuario)) {
-                JOptionPane.showMessageDialog(null, "Registro Guardado");
-                this.Limpiar(); // Se limpia solo cuando todo es válido
-            } else {
-                JOptionPane.showMessageDialog(null, "Error al Guardar");
-            }
-        } else {
+        // Verificar si el usuario ya existe
+        if (controlUsuario.existeUsuario(usuarioText)) {
             JOptionPane.showMessageDialog(null, "El usuario ya está registrado en la Base de Datos.");
+            txt_usuario.setBackground(Color.red);  // Marcar en rojo si ya existe
+            return;
+        }
+
+        // Guardar usuario
+        usuario.setNombre(nombre);
+        usuario.setApellido(apellido);
+        usuario.setUsuario(usuarioText);
+        usuario.setPassword(password);
+        usuario.setTelefono(telefono);
+        usuario.setEstado(1);
+
+        if (controlUsuario.guardar(usuario)) {
+            JOptionPane.showMessageDialog(null, "Registro Guardado");
+            this.Limpiar();
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al Guardar");
         }
     }
 
@@ -218,20 +236,28 @@ public class InterUsuario extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton_GuardarActionPerformed
 
     private void txt_telefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_telefonoKeyTyped
-                    char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (c < '0' || c > '9')
             evt.consume();
     }//GEN-LAST:event_txt_telefonoKeyTyped
 
     private void txt_apellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_apellidoKeyTyped
-                    char c = evt.getKeyChar();
-        if ((c < 'a' || c > 'z') && (c< 'A') | c>'Z') evt.consume();
+        char c = evt.getKeyChar();
+        if (!Character.isLetter(c) && c != ' ') {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_apellidoKeyTyped
 
     private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
-                   char c = evt.getKeyChar();
-        if ((c < 'a' || c > 'z') && (c< 'A') | c>'Z') evt.consume();
+        char c = evt.getKeyChar();
+        if (!Character.isLetter(c) && c != ' ') {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_nombreKeyTyped
+
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -250,7 +276,6 @@ public class InterUsuario extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txt_telefono;
     private javax.swing.JTextField txt_usuario;
     // End of variables declaration//GEN-END:variables
-  
 
     // Métodos de validación
     private boolean validarNombre(String nombre) {
